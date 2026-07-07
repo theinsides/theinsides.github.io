@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitconomist — A Rigorous Financial Survey of Fictional Households</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Oswald:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E3120B;
+  --dark-red: #a50d08;
+  --ink: #1a1a1a;
+  --paper: #F5F0E8;
+  --cream: #EDE8DC;
+  --warm-white: #faf8f3;
+  --rule: #c8bfaa;
+  --rule-light: #ddd6c8;
+  --muted: #6b6256;
+  --green: #2d6a2d;
+  --blue: #2b4f8a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* ── TICKER ── */
+.ticker-bar {
+  background: var(--ink);
+  overflow: hidden;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+.ticker-track {
+  display: flex;
+  animation: ticker 50s linear infinite;
+  white-space: nowrap;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-item {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 0 2rem;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.65);
+}
+.ticker-item .tv { color: rgba(255,255,255,0.35); margin-right: 0.4rem; }
+.ticker-item .val { color: #f0c04a; margin-left: 0.35rem; }
+.ti-up { color: #68c468; }
+.ti-dn { color: var(--red); }
+
+/* ── MASTHEAD ── */
+.masthead {
+  background: var(--red);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.masthead-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: white;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+.logo em { font-style: italic; font-weight: 400; }
+.masthead-meta { text-align: right; }
+.masthead-tagline {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  display: block;
+}
+.masthead-date {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+}
+.era-nav {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 2rem;
+}
+.era-nav::-webkit-scrollbar { display: none; }
+.era-nav a {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.63rem;
+  letter-spacing: 0.14em;
+  text-transform: none;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  padding: 0.45rem 1.1rem;
+  white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  transition: color 0.15s, background 0.15s;
+}
+.era-nav a:first-child { padding-left: 0; }
+.era-nav a:hover, .era-nav a.active { color: white; background: rgba(0,0,0,0.18); }
+
+/* ── HERO ── */
+.hero {
+  background: var(--red);
+  color: white;
+  padding: 3.5rem 2rem 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.03) 39px, rgba(255,255,255,0.03) 40px);
+  pointer-events: none;
+}
+.hero-kicker {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.63rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 0.8rem;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.08;
+  max-width: 860px;
+  margin: 0 auto 1.1rem;
+  position: relative;
+  z-index: 1;
+}
+.hero h1 em { font-style: italic; font-weight: 400; }
+.hero-deck {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.82);
+  max-width: 620px;
+  margin: 0 auto 2rem;
+  position: relative;
+  z-index: 1;
+}
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.hero-stat .hs-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  display: block;
+  line-height: 1;
+}
+.hero-stat .hs-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-top: 0.2rem;
+  display: block;
+}
+
+/* ── LAYOUT ── */
+.container { max-width: 1140px; margin: 0 auto; padding: 0 2rem; }
+
+.section-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.6rem;
+}
+.section-eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--red);
+  opacity: 0.28;
+}
+
+/* ── INTRO ── */
+.intro-section {
+  padding: 2.5rem 0 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+.intro-cols {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.intro-lede {
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 0.9rem;
+}
+.intro-body { font-size: 0.95rem; color: #3a3530; line-height: 1.72; }
+.intro-body + .intro-body { margin-top: 0.7rem; }
+
+.ink-box {
+  background: var(--ink);
+  color: white;
+  padding: 1.4rem;
+  margin-bottom: 2px;
+}
+.ink-box .ib-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--red);
+  display: block;
+}
+.ink-box .ib-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-top: 0.35rem;
+  display: block;
+}
+.ink-box .ib-note {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.7rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 0.7rem;
+  line-height: 1.55;
+}
+
+/* ── ERA SECTIONS ── */
+.era-section {
+  padding: 2.5rem 0 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: 108px;
+}
+.era-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--rule-light);
+}
+.era-decade {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--red);
+  letter-spacing: -3px;
+  opacity: 0.15;
+  user-select: none;
+  flex-shrink: 0;
+}
+.era-decade .decade-s {
+  font-size: 2.8rem;
+  letter-spacing: 0;
+}
+.era-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 0.45rem;
+}
+.era-brief { font-size: 0.88rem; color: #3a3530; line-height: 1.68; }
+
+/* ── CHARACTER CARDS ── */
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  border: 1px solid var(--rule);
+}
+.char-card {
+  padding: 1rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  background: white;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.14s;
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+.char-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.18s ease;
+}
+.char-card:hover { background: var(--cream); }
+.char-card:hover::before, .char-card.active::before { transform: scaleX(1); }
+.char-card.active { background: var(--cream); }
+
+.cc-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin-bottom: 0.1rem;
+}
+.cc-show {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.cc-rating {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.07em;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.cc-occ {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+/* ── DRAWER ── */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,10,0.4);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.drawer-overlay.open { opacity: 1; pointer-events: all; }
+
+.drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(680px, 96vw);
+  background: var(--warm-white);
+  z-index: 400;
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  overflow-y: auto;
+  box-shadow: -6px 0 36px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+}
+.drawer.open { transform: translateX(0); }
+
+.drawer-top {
+  background: var(--red);
+  color: white;
+  padding: 1.5rem 1.75rem 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.drawer-close {
+  position: absolute;
+  top: 1rem; right: 1.25rem;
+  background: none; border: none;
+  color: white; font-size: 1.5rem;
+  cursor: pointer; opacity: 0.65;
+  line-height: 1;
+  transition: opacity 0.15s;
+  font-family: serif;
+}
+.drawer-close:hover { opacity: 1; }
+.drawer-show {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 0.2rem;
+}
+.drawer-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 0.2rem;
+}
+.drawer-occ {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.7);
+}
+.drawer-body { padding: 1.5rem 1.75rem; flex: 1; }
+
+/* Tabs */
+.d-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--rule);
+  margin-bottom: 1.5rem;
+}
+.d-tab {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.63rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.1rem;
+  cursor: pointer;
+  color: var(--muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  background: none;
+  transition: color 0.14s;
+}
+.d-tab.active { color: var(--red); border-bottom-color: var(--red); }
+.d-tab:hover { color: var(--ink); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Loading spinner */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+.spinner {
+  width: 28px; height: 28px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-label {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Rating display */
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  background: var(--cream);
+  border-left: 3px solid var(--red);
+  margin-bottom: 1.1rem;
+}
+.rd-grade {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.rd-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rd-desc { font-size: 0.82rem; color: #3a3530; margin-top: 0.1rem; }
+
+/* AI content area */
+.ai-content { font-size: 0.9rem; line-height: 1.72; color: #3a3530; }
+.ai-content p { margin-bottom: 0.8rem; }
+
+.verdict-box {
+  background: var(--ink);
+  color: white;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+}
+.verdict-box .vb-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 0.3rem;
+}
+.verdict-box .vb-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/* Data table */
+.d-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+  margin-bottom: 1rem;
+}
+.d-table thead tr {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.d-table th {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.35rem 0.5rem;
+  text-align: right;
+}
+.d-table th:first-child { text-align: left; }
+.d-table td {
+  padding: 0.38rem 0.5rem;
+  text-align: right;
+  border-bottom: 1px solid var(--rule-light);
+}
+.d-table td:first-child { text-align: left; }
+.d-table .total-row td {
+  border-top: 2px solid var(--ink);
+  border-bottom: none;
+  font-weight: 600;
+  background: var(--cream);
+}
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+
+.balance-pill {
+  padding: 0.7rem 1rem;
+  margin: 0.75rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid;
+}
+.balance-pill.deficit { border-color: var(--red); background: #fff5f5; }
+.balance-pill.surplus { border-color: var(--green); background: #f4fbf4; }
+.bp-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.bp-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+.bp-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+.balance-pill.deficit .bp-amount { color: var(--red); }
+.balance-pill.surplus .bp-amount { color: var(--green); }
+
+.chart-wrap { height: 210px; margin: 0.75rem 0; position: relative; }
+.chart-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+  margin-top: 1rem;
+}
+
+/* Scenario sliders */
+.scenario-panel {
+  background: var(--cream);
+  padding: 1.1rem;
+  border: 1px solid var(--rule);
+  margin-bottom: 1.25rem;
+}
+.scenario-panel h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+}
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+.slider-row label { font-size: 0.8rem; flex: 1; color: #3a3530; }
+.slider-row input[type=range] { flex: 1.2; accent-color: var(--red); cursor: pointer; }
+.slider-val {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.72rem;
+  min-width: 48px;
+  text-align: right;
+  color: var(--ink);
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+.toggle-row label:first-child { font-size: 0.8rem; flex: 1; color: #3a3530; }
+.tog {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.tog input { opacity: 0; width: 0; height: 0; position: absolute; }
+.tog-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--rule);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tog-slider::before {
+  content: '';
+  position: absolute;
+  height: 14px; width: 14px;
+  left: 3px; top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.tog input:checked + .tog-slider { background: var(--red); }
+.tog input:checked + .tog-slider::before { transform: translateX(16px); }
+.scenario-note {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* ── LEAGUE TABLE ── */
+.league-section {
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: 108px;
+}
+.league-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+  margin-top: 1.25rem;
+}
+.league-table thead tr {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.league-table th {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.4rem 0.55rem;
+  text-align: right;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.league-table th:first-child,
+.league-table th:nth-child(2),
+.league-table th:nth-child(3) { text-align: left; }
+.league-table th:hover { color: var(--red); }
+.league-table th.sort-asc::after { content: ' ↑'; }
+.league-table th.sort-desc::after { content: ' ↓'; }
+.league-table td {
+  padding: 0.42rem 0.55rem;
+  border-bottom: 1px solid var(--rule-light);
+  text-align: right;
+}
+.league-table td:first-child,
+.league-table td:nth-child(2),
+.league-table td:nth-child(3) { text-align: left; }
+.league-table tr:hover td { background: var(--cream); cursor: pointer; }
+.lt-rank { font-family: 'Oswald', sans-serif; font-size: 0.72rem; color: var(--muted); font-weight: 300; }
+.lt-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.88rem; }
+.lt-show { font-size: 0.75rem; font-style: italic; color: var(--muted); }
+.heat-bar-wrap { width: 80px; height: 7px; background: var(--rule-light); position: relative; display: inline-block; vertical-align: middle; }
+.heat-bar { height: 100%; position: absolute; top: 0; left: 0; }
+
+/* ── COMPARE ── */
+.compare-section {
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: 108px;
+}
+.compare-controls {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.compare-controls select {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.9rem;
+  padding: 0.38rem 0.65rem;
+  border: 1px solid var(--rule);
+  background: white;
+  color: var(--ink);
+  cursor: pointer;
+}
+.compare-vs {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+.compare-card { border-top: 3px solid var(--red); padding-top: 0.7rem; }
+.compare-card .ch { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; }
+.compare-card .cs { font-size: 0.78rem; font-style: italic; color: var(--muted); margin-bottom: 0.6rem; }
+.compare-chart-wrap { height: 300px; margin-top: 1.25rem; }
+
+/* ── ANOMALIES ── */
+.anomaly-section { padding: 2.5rem 0; border-bottom: 1px solid var(--rule); }
+.anomaly-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--rule);
+  margin-top: 1.25rem;
+}
+.anomaly-item {
+  padding: 1.2rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+.anomaly-item:nth-child(2n) { border-right: none; }
+.ai-show { font-family: 'Oswald', sans-serif; font-size: 0.56rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--red); margin-bottom: 0.28rem; }
+.ai-title { font-family: 'Playfair Display', serif; font-size: 0.96rem; font-weight: 700; margin-bottom: 0.42rem; line-height: 1.25; }
+.ai-body { font-size: 0.83rem; color: #3a3530; line-height: 1.65; }
+
+/* ── PULLQUOTE ── */
+.pullquote {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 1rem;
+  border-top: 3px solid var(--red);
+  border-bottom: 1px solid var(--rule);
+  padding: 1.5rem 0;
+  margin: 2rem 0;
+}
+.pq-mark { font-family: 'Playfair Display', serif; font-size: 5rem; color: var(--red); font-weight: 900; line-height: 0.65; }
+.pq-text { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-style: italic; line-height: 1.45; }
+.pq-attr { font-family: 'Oswald', sans-serif; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.65rem; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.45);
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+footer .f-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: white; margin-bottom: 0.55rem; display: block; }
+footer .f-text { font-family: 'Oswald', sans-serif; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.9; max-width: 700px; margin: 0 auto; }
+
+@media (max-width: 768px) {
+  .intro-cols, .compare-grid { grid-template-columns: 1fr; }
+  .anomaly-grid { grid-template-columns: 1fr; }
+  .anomaly-item:nth-child(2n) { border-right: 1px solid var(--rule); }
+  .hero-stats { gap: 1.5rem; }
+  .char-grid { grid-template-columns: repeat(2, 1fr); }
+  .masthead-tagline { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-bar" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-main">
+    <a class="logo" href="#top"><em>Sit</em>conomist</a>
+    <div class="masthead-meta">
+      <span class="masthead-tagline">Rigorous financial analysis of fictional households · Est. 2024</span>
+      <span class="masthead-date">All Five Decades</span>
+    </div>
+  </div>
+  <nav class="era-nav" id="eraNavi">
+    <a href="#era-70s">1970s</a>
+    <a href="#era-80s">1980s</a>
+    <a href="#era-90s">1990s</a>
+    <a href="#era-00s">2000s</a>
+    <a href="#era-10s">2010s</a>
+    <a href="#era-20s">2020s</a>
+    <a href="#league">League Table</a>
+    <a href="#compare">Compare</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-kicker">Special Report · 2024</div>
+    <h1>The Impossible <em>Economics</em><br>of the American Sitcom</h1>
+    <p class="hero-deck">Fifty years of fictional households, forensically accounted. The numbers are in. They are, as ever, troubling.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hs-val">37</span><span class="hs-label">Characters profiled</span></div>
+      <div class="hero-stat"><span class="hs-val">312%</span><span class="hs-label">Avg rent-to-income ratio</span></div>
+      <div class="hero-stat"><span class="hs-val">4</span><span class="hs-label">Financially defensible households</span></div>
+      <div class="hero-stat"><span class="hs-val">5</span><span class="hs-label">Decades of fiscal irresponsibility</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro-section">
+  <div class="container">
+    <div class="section-eyebrow">From the Editors</div>
+    <div class="intro-cols">
+      <div>
+        <p class="intro-lede">For five decades, the American sitcom has quietly perpetuated one of the most audacious economic frauds in entertainment history: characters of modest means living in implausibly lavish circumstances, their finances as fictional as the laugh tracks that once accompanied them.</p>
+        <p class="intro-body">The Sitconomist has expanded its forensic accounting to cover 37 iconic characters across six decades of American television. Using period-accurate wage data, city-specific rental indices, inflation adjustments to 2024 dollars, and conservative lifestyle-costing models, we have reconstructed full income-and-expenditure profiles for every subject.</p>
+        <p class="intro-body">Each character has been assigned an Implausibility Rating — our proprietary credit-style scoring system ranging from <strong>AAA</strong> (financially coherent) to <strong>D</strong> (economically catastrophic; should not exist as depicted). Click any character card to open a full financial dossier, complete with AI-generated editorial analysis, interactive scenario modelling, and charts. Adjust the variables. Run the numbers yourself. We warn you: the results are consistently, depressingly illuminating.</p>
+      </div>
+      <div>
+        <div class="ink-box">
+          <span class="ib-val">312%</span>
+          <span class="ib-label">Average rent-to-income ratio</span>
+          <p class="ib-note">Across all 37 subjects, the mean proportion of declared income consumed by housing alone. The conventionally prudent ceiling is 30%. These characters observed no such ceiling, implicitly, for decades.</p>
+        </div>
+        <div class="ink-box" style="margin-top:2px">
+          <span class="ib-val">4</span>
+          <span class="ib-label">Financially defensible characters</span>
+          <p class="ib-note">Out of 37 subjects, only four demonstrate income-to-expenditure ratios that a competent accountant would not flag on sight. They are not who you would expect.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ERA SECTIONS -->
+<div id="erasContainer"></div>
+
+<!-- LEAGUE TABLE -->
+<section class="league-section" id="league">
+  <div class="container">
+    <div class="section-eyebrow">The Implausibility League Table</div>
+    <p class="intro-body">All 37 subjects ranked by financial plausibility. Click any column to re-sort. Click any row to open the full dossier. The heat bar reflects the income-to-expense gap — deeper red means deeper in the impossible.</p>
+    <table class="league-table" id="leagueTable">
+      <thead>
+        <tr>
+          <th data-col="rank">#</th>
+          <th data-col="name">Character</th>
+          <th data-col="show">Show</th>
+          <th data-col="era">Era</th>
+          <th data-col="income">Income</th>
+          <th data-col="expenses">Expenses</th>
+          <th data-col="balance">Balance</th>
+          <th data-col="rating">Rating</th>
+          <th>Gap</th>
+        </tr>
+      </thead>
+      <tbody id="leagueTbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="compare-section" id="compare">
+  <div class="container">
+    <div class="section-eyebrow">Head-to-Head Comparison</div>
+    <p class="intro-body">Select any two subjects for a side-by-side financial reckoning.</p>
+    <div class="compare-controls">
+      <select id="compareA"></select>
+      <span class="compare-vs">vs.</span>
+      <select id="compareB"></select>
+    </div>
+    <div class="compare-grid" id="compareGrid"></div>
+    <div class="compare-chart-wrap"><canvas id="compareChart"></canvas></div>
+  </div>
+</section>
+
+<!-- ANOMALIES -->
+<section class="anomaly-section">
+  <div class="container">
+    <div class="section-eyebrow">Economic Anomalies of Note</div>
+    <div class="anomaly-grid" id="anomalyGrid"></div>
+  </div>
+</section>
+
+<!-- PULLQUOTE -->
+<div style="padding: 0 0 2rem">
+  <div class="container">
+    <div class="pullquote">
+      <div class="pq-mark">"</div>
+      <div>
+        <p class="pq-text">The sitcom apartment is not merely a setting. It is a political statement — an implicit promise that creative, interesting, perpetually-underemployed people deserve comfortable urban lives regardless of economic productivity. It is, in short, aspirational propaganda of the most effective kind.</p>
+        <p class="pq-attr">— Sitconomist Senior Correspondent, Television Economics Desk, 2024</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="f-logo">Sitconomist</span>
+  <p class="f-text">All income figures reconstructed from period wage data, BLS occupational statistics, and city-specific rent indices. Figures adjusted to 2024 USD. All characters are fictional. The economics are not. · Not affiliated with The Economist Group.</p>
+</footer>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dName">
+  <div class="drawer-top">
+    <button class="drawer-close" id="drawerClose" aria-label="Close">×</button>
+    <div class="drawer-show" id="dShow"></div>
+    <div class="drawer-name" id="dName"></div>
+    <div class="drawer-occ" id="dOcc"></div>
+  </div>
+  <div class="drawer-body">
+    <div class="d-tabs">
+      <button class="d-tab active" data-tab="overview">Overview</button>
+      <button class="d-tab" data-tab="financials">Financials</button>
+      <button class="d-tab" data-tab="scenario">Scenario</button>
+    </div>
+    <div class="tab-panel active" id="tab-overview"></div>
+    <div class="tab-panel" id="tab-financials"></div>
+    <div class="tab-panel" id="tab-scenario"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA — lean: numbers + metadata only. Prose via API.
+// ═══════════════════════════════════════════════════════
+const RATING_INFO = {
+  'AAA': { desc: 'Financially coherent. Income supports lifestyle.', color: '#2d6a2d' },
+  'AA':  { desc: 'Tight but survivable. Minor assumptions needed.', color: '#3d7a30' },
+  'A':   { desc: 'Largely plausible. A couple of unexplained conveniences.', color: '#7aaa3a' },
+  'BBB': { desc: 'Borderline. Notable gaps between income and lifestyle.', color: '#c0880a' },
+  'BB':  { desc: 'Requires significant handwaving.', color: '#d46a0a' },
+  'B':   { desc: 'Implausible. Cannot work without major assumptions.', color: '#d43a0a' },
+  'CCC': { desc: 'Structurally insolvent. Should not exist as depicted.', color: '#E3120B' },
+  'D':   { desc: 'Economically catastrophic. No viable income model.', color: '#a50d08' },
+};
+
+const ERAS = [
+  {
+    id: '70s', label: '1970s',
+    headline: 'The Recession Era: When Sitcoms Still Told the Truth',
+    brief: "The 1970s sitcom emerged from a period of genuine economic difficulty — stagflation, the oil crisis, post-Vietnam uncertainty. The era's best comedies reflected this honestly. Working-class households were depicted as stretched, anxious, and politically alive. It would not last.",
+    characters: [
+      { id:'archie', name:'Archie Bunker', show:'All in the Family', years:'1971–83', occupation:'Dock foreman; later tavern owner', rating:'AA',
+        income:[{l:'Dock foreman wages',a:62000},{l:'Overtime (semi-regular)',a:8000},{l:"Edith's occasional work",a:10000}],
+        expenses:[{l:'Mortgage, Queens row house',a:14400},{l:'Household & groceries',a:20000},{l:'Beer, bowling & leisure',a:9600},{l:'Mike & Gloria household offset',a:-6000}] },
+      { id:'rhoda', name:'Rhoda Morgenstern', show:'Rhoda', years:'1974–78', occupation:'Window dresser; later business owner', rating:'A',
+        income:[{l:'Window dressing wages',a:42000},{l:'IBS business revenue (later seasons)',a:18000},{l:"Martin's household contribution",a:22000}],
+        expenses:[{l:'Manhattan apartment (West Side)',a:18000},{l:'Household & food',a:14000},{l:'Clothing & personal',a:9000},{l:'Leisure & social',a:7000}] },
+      { id:'mary', name:'Mary Richards', show:'The Mary Tyler Moore Show', years:'1970–77', occupation:'TV news associate producer', rating:'BBB',
+        income:[{l:'WJM production assistant salary',a:38000},{l:'Promotion: associate producer',a:52000},{l:'Other income',a:4000}],
+        expenses:[{l:'Minneapolis apartment',a:10800},{l:'Food & dining',a:8400},{l:'Clothing (notably stylish)',a:11000},{l:'Social & leisure',a:7000}] },
+    ]
+  },
+  {
+    id: '80s', label: '1980s',
+    headline: 'The Affluence Decade: When Aspirational Became Default',
+    brief: "The 1980s saw the sitcom pivot decisively toward aspirational fantasy. The Reagan era's cultural optimism sanctioned wealth as a natural backdrop; even working-class shows began upgrading their sets. The Cosby Show set the template — a Black professional household whose financial coherence was, paradoxically, its most radical act.",
+    characters: [
+      { id:'cliff', name:'Cliff Huxtable', show:'The Cosby Show', years:'1984–92', occupation:'OB/GYN physician; Clair is an attorney', rating:'AAA',
+        income:[{l:'OB/GYN practice income',a:220000},{l:'Clair Huxtable attorney salary',a:165000},{l:'Other household income',a:15000}],
+        expenses:[{l:'Brooklyn brownstone mortgage',a:36000},{l:'Household & food (large family)',a:32000},{l:"Children's private education",a:48000},{l:'Clothing, leisure, social',a:28000}] },
+      { id:'sam', name:'Sam Malone', show:'Cheers', years:'1982–93', occupation:"Former Red Sox pitcher; bar owner", rating:'A',
+        income:[{l:'Cheers bar net operating income',a:88000},{l:'Real estate appreciation (owns building)',a:22000},{l:'Athlete residual income',a:12000}],
+        expenses:[{l:'Bar operating costs (staff, stock)',a:28000},{l:'Personal living (apartment above bar)',a:7200},{l:'Dating & leisure',a:18000},{l:'Taxes & business overhead',a:16000}] },
+      { id:'al', name:'Al Bundy', show:'Married with Children', years:'1987–97', occupation:"Shoe salesman, Garry's Shoes", rating:'B',
+        income:[{l:'Shoe salesman wages & commission',a:38000},{l:"Peg's occasional income",a:2000},{l:'NOMAAM scheme revenue',a:400}],
+        expenses:[{l:'Chicago suburban mortgage',a:8400},{l:'Household & groceries (four people)',a:16000},{l:"Peg's discretionary spending",a:14000},{l:'Kelly & Bud dependencies',a:8000}] },
+      { id:'carla', name:'Carla Tortelli', show:'Cheers', years:'1982–93', occupation:'Waitress, Cheers bar', rating:'BBB',
+        income:[{l:'Waitress wages (tipped)',a:28000},{l:'Tips (Boston bar)',a:18000},{l:'Child support (partial)',a:7200}],
+        expenses:[{l:'Rent, Boston apartment',a:9600},{l:'Childcare (up to 8 children)',a:24000},{l:'Food & household',a:12000},{l:'Personal & transport',a:5000}] },
+      { id:'alexp', name:'Alex P. Keaton', show:'Family Ties', years:'1982–89', occupation:'Student; amateur day-trader', rating:'CCC',
+        income:[{l:'Allowance & odd jobs',a:3600},{l:'Stock market trading',a:4200},{l:'Tutoring & side hustles',a:2400}],
+        expenses:[{l:'Room & board (lives at home — zero)',a:0},{l:'Suits, briefcase, WSJ subscription',a:3200},{l:'Dates & social',a:4000},{l:'Investment losses',a:2800}] },
+      { id:'goldengirlsdorothy', name:'Dorothy Zbornak', show:'The Golden Girls', years:'1985–92', occupation:'Substitute teacher', rating:'BB',
+        income:[{l:'Substitute teacher wages',a:34000},{l:'Shared household expenses (4 women)',a:12000},{l:'Occasional other income',a:3000}],
+        expenses:[{l:'Miami house mortgage share (1/4)',a:5400},{l:'Food & household share',a:9600},{l:'Clothing & personal',a:8000},{l:'Social & leisure',a:7000}] },
+    ]
+  },
+  {
+    id: '90s', label: '1990s',
+    headline: 'The Golden Age of Implausibility: Manhattan Rents, Barista Wages',
+    brief: "The 1990s represent the sitcom's definitive break from economic reality. Two shows — Friends and Seinfeld — established a template so pervasive that the Manhattan apartment became a genre convention requiring no justification. A generation of viewers absorbed, subliminally, the idea that creative people in New York simply lived this way.",
+    characters: [
+      { id:'rachel', name:'Rachel Green', show:'Friends', years:'1994–2004', occupation:'Waitress → fashion assistant → Ralph Lauren buyer', rating:'D',
+        income:[{l:'Waitress wages, Central Perk',a:22000},{l:'Tips (generous estimate)',a:11000},{l:'Family transfers (sporadic)',a:4000}],
+        expenses:[{l:"Rent share, Monica's apt (stabilised)",a:12000},{l:'Clothing & fashion (documented excess)',a:18000},{l:'Food & dining out',a:9600},{l:'Transport & leisure',a:6000}] },
+      { id:'monica', name:'Monica Geller', show:'Friends', years:'1994–2004', occupation:"Chef → head chef → restaurateur", rating:'BB',
+        income:[{l:'Line cook / sous chef wages',a:42000},{l:'Head chef salary (later seasons)',a:68000},{l:'Side catering work',a:8000}],
+        expenses:[{l:"Apt 20E, rent-stabilised (Nana's lease)",a:10200},{l:'Food & kitchen supplies',a:9600},{l:'Social & entertainment',a:11000},{l:'Clothing & personal',a:8400}] },
+      { id:'joey', name:'Joey Tribbiani', show:'Friends', years:'1994–2004', occupation:'Struggling actor; Drake Ramoray', rating:'D',
+        income:[{l:'Acting income (avg, 10 years)',a:19000},{l:'Drake Ramoray peak seasons',a:32000},{l:"Chandler's informal subsidies",a:14400}],
+        expenses:[{l:'Rent, apartment 19 (Chandler-supplemented)',a:13200},{l:'Food (clinically abnormal)',a:18000},{l:'Headshots, classes, agent 15%',a:5200},{l:'Social & leisure',a:7200}] },
+      { id:'chandler', name:'Chandler Bing', show:'Friends', years:'1994–2004', occupation:'Statistical analysis & data reconfiguration', rating:'A',
+        income:[{l:'Corporate analytics salary',a:105000},{l:'Annual bonus',a:22000},{l:'Stock options (vested)',a:11000}],
+        expenses:[{l:'Rent, apartment 19 (own share)',a:13200},{l:'Joey loans & subsidies',a:14400},{l:'Dining, entertainment, social',a:14000},{l:'Clothing & personal',a:9000},{l:'Tax & retirement',a:26000}] },
+      { id:'ross', name:'Ross Geller', show:'Friends', years:'1994–2004', occupation:'Palaeontologist; NYU professor; museum curator', rating:'BBB',
+        income:[{l:'NYU professorship (tenured)',a:105000},{l:'Museum of Natural History retainer',a:28000},{l:'Research stipends',a:7000}],
+        expenses:[{l:'Apartment, Upper West Side',a:24000},{l:'Three divorces (annualised legal)',a:28000},{l:'Child support for Ben',a:14400},{l:'Personal, dining, leisure',a:18000}] },
+      { id:'jerry', name:'Jerry Seinfeld', show:'Seinfeld', years:'1989–98', occupation:'Stand-up comedian', rating:'BBB',
+        income:[{l:'Stand-up (NYC clubs, ~120 gigs/yr)',a:56000},{l:'TV spots & corporate bookings',a:22000},{l:'Pilot income (Season 4 arc)',a:12000}],
+        expenses:[{l:'Rent, 129 W 81st (stabilised)',a:10800},{l:"Monk's Café (4× weekly est.)",a:8320},{l:'Dating, transport, entertainment',a:16000},{l:'Personal & misc',a:6000}] },
+      { id:'kramer', name:'Cosmo Kramer', show:'Seinfeld', years:'1989–98', occupation:'Perpetually unemployed; serial entrepreneur', rating:'D',
+        income:[{l:'Scheme revenue (annual average)',a:1800},{l:'Polar Bear settlement (amortised)',a:600},{l:'Social transfers (primarily Jerry)',a:5400}],
+        expenses:[{l:'Rent (assumed largely unpaid)',a:10800},{l:"Food (Jerry's fridge + diner tabs)",a:5800},{l:'Scheme operating costs',a:3600},{l:'Personal (cigars, etc.)',a:2400}] },
+      { id:'elaine', name:'Elaine Benes', show:'Seinfeld', years:'1989–98', occupation:'Editor → creative director, Pendant / J. Peterman', rating:'A',
+        income:[{l:'Senior editorial salary',a:72000},{l:'Creative director, J. Peterman',a:94000},{l:'Freelance editorial',a:6000}],
+        expenses:[{l:'Rent, Manhattan (stabilised studio)',a:11400},{l:'Food & social',a:13200},{l:'Clothing & personal',a:10800},{l:'Transport',a:5200}] },
+      { id:'frasier', name:'Dr. Frasier Crane', show:'Frasier', years:'1993–2004', occupation:'Radio host; private psychiatrist', rating:'AAA',
+        income:[{l:'KACL radio salary',a:155000},{l:'Private psychiatric practice',a:68000},{l:'Speaking & book royalties',a:22000}],
+        expenses:[{l:'Rent, Elliott Bay Towers',a:42000},{l:'Wine & restaurant',a:22000},{l:'Art, furniture, cultural events',a:14000},{l:"Martin's care & household staff",a:9600},{l:'Clothing & personal',a:11000}] },
+      { id:'niles', name:'Dr. Niles Crane', show:'Frasier', years:'1993–2004', occupation:'Private Jungian psychiatrist', rating:'AA',
+        income:[{l:'Private psychiatry (full schedule)',a:188000},{l:'Maris household transfers (pre-divorce)',a:48000},{l:'Published papers & speaking',a:9000}],
+        expenses:[{l:'Rent, Elliott Bay Towers (premium)',a:46000},{l:'Wine cellar (documented obsession)',a:28000},{l:'Divorce legal costs (annualised)',a:38000},{l:'Opera, theatre, cultural subs',a:20000},{l:'Bespoke clothing',a:14000}] },
+      { id:'will', name:'Will Smith', show:'The Fresh Prince of Bel-Air', years:'1990–96', occupation:'Student; Banks family dependent', rating:'AA',
+        income:[{l:'Allowance from Banks family',a:8400},{l:'Odd jobs & schemes',a:5200},{l:'Banks household subsidy (housing, food)',a:48000}],
+        expenses:[{l:'Room & board (Banks mansion — zero direct cost)',a:0},{l:'Clothing (distinctive)',a:7200},{l:'Social, leisure & dating',a:9600},{l:'Education (Bel-Air Academy)',a:0}] },
+      { id:'roseanne', name:'Roseanne Conner', show:'Roseanne', years:'1988–97', occupation:'Factory worker; waitress; diner owner', rating:'BB',
+        income:[{l:'Factory wages (Wellman Plastics)',a:36000},{l:"Dan's construction income (variable)",a:42000},{l:'Diner revenue (later seasons)',a:28000}],
+        expenses:[{l:'Mortgage, Lanford IL house',a:9600},{l:'Household & groceries (five people)',a:22000},{l:"Three children's expenses",a:14000},{l:'Medical & household emergencies',a:8000}] },
+    ]
+  },
+  {
+    id: '00s', label: '2000s',
+    headline: 'Post-Bubble Prosperity: The Office Park and the McMansion',
+    brief: "The 2000s sitcom bifurcated. The mockumentary format introduced economic realism — Scranton paper salespeople, Pawnee civil servants. On the other side, Two and a Half Men offered lifestyle inflation so aggressive it became its own genre. The decade is defined by this split.",
+    characters: [
+      { id:'michael', name:'Michael Scott', show:'The Office (US)', years:'2005–11', occupation:'Regional manager, Dunder Mifflin Scranton', rating:'CCC',
+        income:[{l:'Regional manager salary',a:78000},{l:'Bonus (inconsistent)',a:6000},{l:'Michael Scott Paper Co. (brief)',a:14000}],
+        expenses:[{l:'Condo, Scranton (peak purchase)',a:18000},{l:'Porsche lease (documented)',a:14400},{l:'Entertainment, gifts, magic sets',a:18000},{l:'Impractical purchases',a:12000},{l:'Debt service',a:9600}] },
+      { id:'tobias', name:'Tobias Fünke', show:'Arrested Development', years:'2003–19', occupation:'Analyst-therapist (unlicensed); aspiring actor', rating:'D',
+        income:[{l:'Bluth family transfers (Lindsay-mediated)',a:12000},{l:'Acting income (entire career)',a:800},{l:'Therapy clients (none verified)',a:0}],
+        expenses:[{l:'Living (Bluth household, subsidised)',a:8400},{l:'Blue Man auditions (travel, supplies)',a:4200},{l:'Acting classes & headshots',a:3600},{l:'Cutoffs & leather accessories',a:2400}] },
+      { id:'jd', name:'J.D. Dorian', show:'Scrubs', years:'2001–10', occupation:'Medical intern → resident → attending', rating:'BB',
+        income:[{l:'Medical intern stipend (yrs 1–3)',a:52000},{l:'Resident salary (yrs 4–6)',a:66000},{l:'Attending physician (later seasons)',a:110000}],
+        expenses:[{l:'Apartment share (Turk co-tenant)',a:12000},{l:'Medical school debt service',a:18000},{l:'Social, leisure, dates',a:12000},{l:'Personal & misc',a:8000}] },
+      { id:'charlie', name:'Charlie Harper', show:'Two and a Half Men', years:'2003–12', occupation:'Jingle composer', rating:'BB',
+        income:[{l:'Jingle composition income',a:180000},{l:'Royalties (legacy catalogue)',a:62000},{l:'Other creative income',a:18000}],
+        expenses:[{l:'Malibu beach house (owns outright — unexplained)',a:0},{l:'Alcohol (industrial-scale)',a:24000},{l:'Women & entertainment',a:36000},{l:'Alan & Jake subsidy',a:18000}] },
+      { id:'raymond', name:'Ray Barone', show:'Everybody Loves Raymond', years:'1996–2005', occupation:'Sports columnist, Newsday', rating:'A',
+        income:[{l:'Sports columnist salary, Newsday',a:92000},{l:'Book deals & speaking',a:28000},{l:'Syndication residuals',a:14000}],
+        expenses:[{l:'Suburban Long Island house (mortgage)',a:24000},{l:"Three children's expenses",a:18000},{l:'Household (Debra primary manager)',a:16000},{l:'Sport, personal, social',a:12000}] },
+      { id:'tony', name:'Tony Soprano', show:'The Sopranos', years:'1999–2007', occupation:'Waste management; mob boss', rating:'AA',
+        income:[{l:'Waste management company (declared)',a:85000},{l:'Organized crime proceeds (est., laundered)',a:420000},{l:'Other business interests',a:38000}],
+        expenses:[{l:'New Jersey McMansion (mortgage)',a:42000},{l:'AJ & Meadow expenses',a:36000},{l:'Therapy (Dr. Melfi)',a:9600},{l:'Household & Carmela',a:48000},{l:'Business obligations & gifts',a:62000}] },
+      { id:'david', name:'David Brent', show:'The Office (UK)', years:'2001–03', occupation:'Regional manager, Wernham Hogg; later motivational speaker', rating:'CCC',
+        income:[{l:'Regional manager salary',a:52000},{l:'Motivational speaking (post-redundancy)',a:8000},{l:'Documentary appearance fees',a:4000}],
+        expenses:[{l:'Slough flat (rented)',a:12000},{l:'Clothing & image (significant)',a:9600},{l:'Entertainment, "the lads"',a:11000},{l:'Guitar & music ambitions',a:4800}] },
+    ]
+  },
+  {
+    id: '10s', label: '2010s',
+    headline: 'The Austerity Sitcom: Gig Economy Enters the Frame',
+    brief: "The 2010s brought new economic anxiety to the American sitcom, shaped by the 2008 crash, the gig economy, student debt, and housing costs that had become genuinely disconnected from median wages. The best shows began to acknowledge this — though the Manhattan apartment remained stubbornly affordable.",
+    characters: [
+      { id:'leslie', name:'Leslie Knope', show:'Parks and Recreation', years:'2009–15', occupation:'Deputy Director, Parks & Rec, Pawnee IN', rating:'AA',
+        income:[{l:'Municipal salary (deputy director)',a:62000},{l:"Ben's income (city manager)",a:74000},{l:'Book advance (Knope titles)',a:8000}],
+        expenses:[{l:'House, Pawnee IN (modest)',a:10800},{l:'Waffle House (clinical frequency)',a:5200},{l:'Household & family',a:18000},{l:'Civic & campaign activities',a:7200}] },
+      { id:'nick', name:'Nick Miller', show:'New Girl', years:'2011–18', occupation:'Bar manager, The Griffin', rating:'CCC',
+        income:[{l:'Bar manager wages (Los Angeles)',a:38000},{l:'Novel revenue (Night Moves)',a:1200},{l:'Loft below-market rent subsidy',a:14400}],
+        expenses:[{l:'Loft rent, 4D share (below-market)',a:8400},{l:'Beer & food',a:9600},{l:'Debt service (referenced)',a:6000},{l:'Social & dating',a:8000}] },
+      { id:'jake', name:'Jake Peralta', show:'Brooklyn Nine-Nine', years:'2013–21', occupation:'NYPD detective, 99th precinct', rating:'CCC',
+        income:[{l:'NYPD detective salary (Grade 1)',a:76000},{l:'Overtime (frequent)',a:12000},{l:'Other income',a:2000}],
+        expenses:[{l:'Brooklyn apartment (above salary range)',a:22800},{l:'Credit card debt service (referenced repeatedly)',a:14400},{l:'Food, social, entertainment',a:16000},{l:'Die Hard memorabilia',a:6000}] },
+      { id:'dennis', name:'Dennis Reynolds', show:"It's Always Sunny in Philadelphia", years:'2005–present', occupation:"Bar co-owner, Paddy's Pub", rating:'D',
+        income:[{l:"Paddy's Pub ownership share (net)",a:8400},{l:'Occasional scam revenue',a:2200},{l:'Social transfers from Dee',a:3600}],
+        expenses:[{l:'Philadelphia apartment (maintained somehow)',a:12000},{l:'Clothing & appearance (narcissistic)',a:9600},{l:'Dating & social manipulation',a:7200},{l:'Unaddressed therapy needs',a:0}] },
+      { id:'abbi', name:'Abbi Abrams', show:'Broad City', years:'2014–19', occupation:'Gym cleaner; aspiring artist', rating:'CCC',
+        income:[{l:'Soulstice gym wages',a:28000},{l:'Odd creative jobs',a:6000},{l:'Art sales (sparse)',a:2400}],
+        expenses:[{l:'Brooklyn apartment, Ilana co-tenant',a:14400},{l:'Social expenses (documented)',a:9600},{l:'Marijuana (significant line item)',a:4800},{l:'Food & transport',a:8400}] },
+      { id:'jay', name:'Jay Pritchett', show:'Modern Family', years:'2009–20', occupation:"Owner, Pritchett's Closets & Blinds", rating:'AAA',
+        income:[{l:"Pritchett's Closets operating income",a:320000},{l:'Real estate investment portfolio',a:85000},{l:'Business equity & dividends',a:42000}],
+        expenses:[{l:'Encino mansion (paid off)',a:18000},{l:"Gloria's lifestyle expectations",a:48000},{l:'Adult children subsidies',a:22000},{l:'Household, travel & personal',a:36000}] },
+      { id:'piper', name:'Piper Chapman', show:'Orange Is the New Black', years:'2013–19', occupation:'Prison inmate; soap entrepreneur (briefly)', rating:'D',
+        income:[{l:'Prison work assignment wages',a:624},{l:'Contraband soap business (one season)',a:3200},{l:"Larry's financial support (sporadic)",a:6000}],
+        expenses:[{l:'Room & board (prison — state-covered)',a:0},{l:'Commissary spending',a:2400},{l:'Legal fees (ongoing)',a:18000},{l:'Pre-incarceration life dismantlement',a:24000}] },
+    ]
+  },
+  {
+    id: '20s', label: '2020s',
+    headline: 'The Cost-of-Living Comedy: Post-Pandemic Fiscal Reality',
+    brief: "The 2020s sitcom is increasingly aware of economic anxiety in a way its predecessors were not. Abbott Elementary depicts a teacher's salary as genuinely inadequate; The Bear depicts a restaurant's finances as genuinely precarious. Whether this represents a lasting shift toward realism or a temporary correction remains to be seen.",
+    characters: [
+      { id:'janine', name:'Janine Teagues', show:'Abbott Elementary', years:'2021–present', occupation:'2nd grade teacher, Willard R. Abbott Elementary, Philadelphia', rating:'BB',
+        income:[{l:'Philadelphia public school teacher salary',a:48000},{l:'Tutoring & supplemental work',a:6000},{l:'Other income',a:2000}],
+        expenses:[{l:'Philadelphia apartment',a:13200},{l:'Classroom supplies (out-of-pocket)',a:3600},{l:'Food, transport, personal',a:14400},{l:'Student loan debt service',a:7200}] },
+      { id:'carmy', name:"Carmen 'Carmy' Berzatto", show:'The Bear', years:'2022–present', occupation:'Head chef / owner, The Beef / The Bear, Chicago', rating:'CCC',
+        income:[{l:'The Beef (inherited, near break-even)',a:42000},{l:'Prior Michelin-starred savings',a:35000},{l:'The Bear launch investment (depleted)',a:-180000}],
+        expenses:[{l:'Restaurant renovation & relaunch',a:280000},{l:'Staff costs (generous, family)',a:96000},{l:'Personal (minimal)',a:9600},{l:'Therapy (needed, unpursued)',a:0}] },
+      { id:'oliver', name:'Oliver Putnam', show:'Only Murders in the Building', years:'2021–present', occupation:'Faded theatre director; podcast host', rating:'D',
+        income:[{l:'Podcast revenue (optimistic)',a:4200},{l:'Past theatrical royalties (diminishing)',a:8000},{l:'Charles transfer (informal)',a:6000}],
+        expenses:[{l:'Arconia apartment, Upper West Side (stabilised)',a:24000},{l:'Winnie (dog) care & boarding',a:4800},{l:'Food, entertainment, social',a:12000},{l:'Theatrical ambitions (ongoing)',a:9600}] },
+      { id:'davidrose', name:'David Rose', show:"Schitt's Creek", years:'2015–20', occupation:'Gallery owner → Rose Apothecary co-founder', rating:'BB',
+        income:[{l:'Rose Apothecary revenue (later seasons)',a:68000},{l:"Patrick's business management",a:52000},{l:'Rose family support (intermittent)',a:8000}],
+        expenses:[{l:"Schitt's Creek motel room (below-market)",a:6000},{l:'Clothing (Alexander McQueen in a motel)',a:22000},{l:'Rose Apothecary business costs',a:28000},{l:'Personal & social',a:11000}] },
+      { id:'ted', name:'Ted Lasso', show:'Ted Lasso', years:'2020–23', occupation:'AFC Richmond head coach', rating:'AA',
+        income:[{l:'Premier League head coach salary (est.)',a:280000},{l:'Coaching bonuses',a:45000},{l:'Other income',a:12000}],
+        expenses:[{l:'Richmond flat (club-subsidised)',a:18000},{l:'Richmond biscuits supply chain',a:3600},{l:'Child support & US family',a:36000},{l:'Personal & social',a:22000}] },
+    ]
+  },
+];
+
+const ANOMALIES = [
+  { show:"Friends · 1994–2004", title:"The Greenwich Village Miracle: Two Bedrooms, Zero Budget", body:"Monica Geller's apartment at 90 Bedford Street would command $4,500–$6,000/month at 1995 market rates. Her grandmother's rent-stabilised lease, introduced in Season 4, retroactively explains the discount — while raising questions about sublet law that the show has no interest in answering." },
+  { show:"Seinfeld · 1989–1998", title:"Kramer's Non-Employment Full Employment Paradox", body:"Cosmo Kramer, across 180 episodes, held zero verified jobs. His income totals approximately $7,800 per year at optimistic estimate. His apartment costs a conservative $900/month. The gap is never addressed. Our best hypothesis: he simply does not pay rent, and Jerry has never noticed." },
+  { show:"Frasier · 1993–2004", title:"The One Character Who Could Actually Afford His Lifestyle", body:"Dr. Frasier Crane is the control group. A major-market radio host with a maintained private practice can defend his apartment, his wine, and his Barcelona chair. Frasier is financially coherent. This makes him the most unusual character in our entire dataset." },
+  { show:"It's Always Sunny · 2005–present", title:"Paddy's Pub: Eighteen Seasons of Revenue-Free Operations", body:"Paddy's Pub has operated across eighteen seasons without visible revenue. The gang's income from bar operations is, at optimistic estimate, $0. The pub continues to have electricity, stock, and bar stools. No explanation has been offered. None is expected." },
+  { show:"Abbott Elementary · 2021–present", title:"The Most Financially Honest Show in a Decade", body:"Abbott Elementary depicts its protagonist buying her own classroom supplies on a $48,000 salary. This is accurate. Philadelphia public school teachers report spending an average of $600/year of personal funds on supplies. The show treats this as tragedy. The Sitconomist treats it as a first-order financial fact." },
+  { show:"Schitt's Creek · 2015–2020", title:"David Rose's Wardrobe: An Unresolved Mystery of Motel Economics", body:"David Rose, residing in a Schitt's Creek motel room following the family's financial collapse, continues to wear Alexander McQueen and Rick Owens throughout the series. These garments are never discussed as a budget line. They exist as a quiet, impeccable refusal of narrative logic." },
+];
+
+const TICKERS = [
+  {tv:'FRIENDS', l:'Central Perk Occupancy Rate', v:'94%', d:'up', n:'nobody buys coffee'},
+  {tv:'SEINFELD', l:'Kramer Scheme Failure Rate', v:'98.3%', d:'up', n:'Q3 estimate'},
+  {tv:'CHEERS', l:'Sam Malone Annual Dating Expense', v:'$18K', d:'dn', n:'per annum'},
+  {tv:'FRASIER', l:'Niles Wine Collection Value', v:'$142,000', d:'up', n:'mark-to-market'},
+  {tv:'SUNNY', l:"Paddy's Pub Q4 Revenue", v:'$400', d:'dn', n:'disappointing'},
+  {tv:'THE OFFICE', l:'Michael Scott Credit Utilisation', v:'103%', d:'up', n:'above recommended'},
+  {tv:'ABBOTT', l:'Janine Out-of-Pocket Supplies', v:'$3,600', d:'up', n:'per academic year'},
+  {tv:'THE BEAR', l:'Bear Restaurant Break-Even ETA', v:'Q3 2027', d:'dn', n:'revised forecast'},
+  {tv:'PARKS', l:'Pawnee Waffle Index (Leslie)', v:'$5,200/yr', d:'up', n:'stable demand'},
+  {tv:'B99', l:'Peralta Debt-to-Income Ratio', v:'184%', d:'dn', n:'worsening'},
+  {tv:'BROAD CITY', l:'Abbi/Ilana NYC Survival Margin', v:'–$240/mo', d:'dn', n:'unclear how'},
+  {tv:'NEW GIRL', l:'Night Moves Gross Revenue (lifetime)', v:'$1,200', d:'dn', n:'Miller, N.'},
+  {tv:'SOPRANOS', l:"Tony Soprano Therapy ROI", v:'Negative', d:'dn', n:'Dr. Melfi concurs'},
+  {tv:'TWO MEN', l:'Charlie Harper Malibu House Acquisition Mystery', v:'Unresolved', d:'', n:'still unresolved'},
+];
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+const ALL = ERAS.flatMap(e => e.characters.map(c => ({...c, eraLabel: e.label, eraId: e.id})));
+
+function fmt(n) {
+  return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Math.abs(n));
+}
+function fmtK(n) {
+  const abs = Math.abs(n);
+  return (n < 0 ? '-' : '') + (abs >= 1000 ? '$' + Math.round(abs/1000) + 'k' : '$' + abs);
+}
+function getFinancials(char, ov = {}) {
+  const im = ov.incomeMult ?? 1;
+  const em = ov.expenseMult ?? 1;
+  const rc = ov.rentControl ?? true;
+  const sub = ov.subsidy ?? true;
+
+  const income = char.income.map(i => ({...i, a: Math.round(i.a * im)}));
+  const expenses = char.expenses.map(e => {
+    let a = e.a;
+    if (!rc && /rent|mortgage|apartment/i.test(e.l)) a = Math.round(a * 2.6);
+    if (!sub && /subsid|transfer|chandler|family|banks|bluth/i.test(e.l)) a = 0;
+    return {...e, a: Math.round(a * em)};
+  });
+  const totalIncome = income.reduce((s,i) => s + i.a, 0);
+  const totalExpense = expenses.reduce((s,e) => s + Math.max(0, e.a), 0);
+  const balance = totalIncome - totalExpense;
+  const rentLine = expenses.find(e => /rent|mortgage|apartment/i.test(e.l));
+  const rentRatio = rentLine && totalIncome > 0 ? Math.round((rentLine.a / totalIncome)*100) : 0;
+  return { income, expenses, totalIncome, totalExpense, balance, rentRatio };
+}
+
+// ═══════════════════════════════════════════════════════
+// BUILD TICKER
+// ═══════════════════════════════════════════════════════
+function buildTicker() {
+  const items = [...TICKERS, ...TICKERS];
+  document.getElementById('tickerTrack').innerHTML = items.map(t => `
+    <div class="ticker-item">
+      <span class="tv">${t.tv}</span>${t.l}
+      <span class="val">${t.v}</span>
+      ${t.d === 'up' ? '<span class="ti-up"> ↑</span>' : t.d === 'dn' ? '<span class="ti-dn"> ↓</span>' : ''}
+      <span style="color:rgba(255,255,255,0.28);font-size:0.52rem"> ${t.n}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// BUILD ERAS
+// ═══════════════════════════════════════════════════════
+function buildEras() {
+  const container = document.getElementById('erasContainer');
+  ERAS.forEach(era => {
+    const sec = document.createElement('section');
+    sec.className = 'era-section';
+    sec.id = `era-${era.id}`;
+    sec.innerHTML = `<div class="container">
+      <div class="section-eyebrow">${era.label}</div>
+      <div class="era-header">
+        <div class="era-decade">${era.label.replace(/s$/, '<span class="decade-s">s</span>')}</div>
+        <div>
+          <div class="era-headline">${era.headline}</div>
+          <p class="era-brief">${era.brief}</p>
+        </div>
+      </div>
+      <div class="char-grid" id="grid-${era.id}"></div>
+    </div>`;
+    container.appendChild(sec);
+
+    const grid = sec.querySelector(`#grid-${era.id}`);
+    era.characters.forEach(char => {
+      const ri = RATING_INFO[char.rating] || {};
+      const card = document.createElement('div');
+      card.className = 'char-card';
+      card.dataset.id = char.id;
+      card.innerHTML = `
+        <div class="cc-name">${char.name}</div>
+        <div class="cc-show">${char.show}, ${char.years}</div>
+        <div class="cc-rating" style="color:${ri.color}">${char.rating} — ${ri.desc.split('.')[0]}</div>
+        <div class="cc-occ">${char.occupation}</div>`;
+      card.addEventListener('click', () => openDrawer(char));
+      grid.appendChild(card);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BUILD ANOMALIES
+// ═══════════════════════════════════════════════════════
+function buildAnomalies() {
+  document.getElementById('anomalyGrid').innerHTML = ANOMALIES.map(a => `
+    <div class="anomaly-item">
+      <div class="ai-show">${a.show}</div>
+      <div class="ai-title">${a.title}</div>
+      <p class="ai-body">${a.body}</p>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// LEAGUE TABLE
+// ═══════════════════════════════════════════════════════
+const RATING_ORDER = ['AAA','AA','A','BBB','BB','B','CCC','D'];
+let lSort = { col:'balance', dir:'asc' };
+
+function buildLeague() {
+  document.querySelectorAll('.league-table th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      lSort.dir = lSort.col === col ? (lSort.dir === 'asc' ? 'desc' : 'asc') : (col === 'name'||col === 'show'||col === 'era' ? 'asc' : 'asc');
+      lSort.col = col;
+      renderLeague();
+    });
+  });
+  renderLeague();
+}
+
+function renderLeague() {
+  const data = ALL.map(c => { const f = getFinancials(c); return {...c, ...f}; });
+  const d = lSort.dir === 'asc' ? 1 : -1;
+  data.sort((a,b) => {
+    if (lSort.col === 'name') return d * a.name.localeCompare(b.name);
+    if (lSort.col === 'show') return d * a.show.localeCompare(b.show);
+    if (lSort.col === 'era') return d * a.eraLabel.localeCompare(b.eraLabel);
+    if (lSort.col === 'income') return d * (a.totalIncome - b.totalIncome);
+    if (lSort.col === 'expenses') return d * (a.totalExpense - b.totalExpense);
+    if (lSort.col === 'balance') return d * (a.balance - b.balance);
+    if (lSort.col === 'rating') return d * (RATING_ORDER.indexOf(a.rating) - RATING_ORDER.indexOf(b.rating));
+    return 0;
+  });
+
+  document.querySelectorAll('.league-table th').forEach(th => { th.classList.remove('sort-asc','sort-desc'); });
+  const activeTh = document.querySelector(`.league-table th[data-col="${lSort.col}"]`);
+  if (activeTh) activeTh.classList.add(lSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+
+  const maxGap = Math.max(...data.map(d => Math.abs(d.balance)));
+
+  document.getElementById('leagueTbody').innerHTML = data.map((c,i) => {
+    const ri = RATING_INFO[c.rating] || {};
+    const isD = c.balance < 0;
+    const pct = Math.round((Math.abs(c.balance) / maxGap) * 100);
+    return `<tr data-id="${c.id}">
+      <td class="lt-rank">${i+1}</td>
+      <td><span class="lt-name">${c.name}</span></td>
+      <td><span class="lt-show">${c.show}</span></td>
+      <td style="font-family:'Oswald',sans-serif;font-size:0.7rem;color:var(--muted)">${c.eraLabel}</td>
+      <td class="pos">${fmtK(c.totalIncome)}</td>
+      <td class="neg">${fmtK(c.totalExpense)}</td>
+      <td class="${isD?'neg':'pos'}">${isD?'–':'+'}${fmtK(Math.abs(c.balance))}</td>
+      <td style="color:${ri.color};font-family:'Oswald',sans-serif;font-weight:500;font-size:0.72rem">${c.rating}</td>
+      <td><div class="heat-bar-wrap"><div class="heat-bar" style="width:${pct}%;background:${isD?'var(--red)':'var(--green)'}"></div></div></td>
+    </tr>`;
+  }).join('');
+
+  document.querySelectorAll('#leagueTbody tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const c = ALL.find(x => x.id === tr.dataset.id);
+      if (c) openDrawer(c);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// COMPARE
+// ═══════════════════════════════════════════════════════
+let cmpChart = null;
+function buildCompare() {
+  const opts = ALL.map(c => `<option value="${c.id}">${c.name} (${c.show})</option>`).join('');
+  document.getElementById('compareA').innerHTML = opts;
+  document.getElementById('compareB').innerHTML = opts;
+  document.getElementById('compareB').selectedIndex = 6;
+  ['compareA','compareB'].forEach(id => document.getElementById(id).addEventListener('change', runCompare));
+  runCompare();
+}
+
+function runCompare() {
+  const cA = ALL.find(c => c.id === document.getElementById('compareA').value);
+  const cB = ALL.find(c => c.id === document.getElementById('compareB').value);
+  if (!cA || !cB) return;
+  const fA = getFinancials(cA), fB = getFinancials(cB);
+
+  document.getElementById('compareGrid').innerHTML = [cA,cB].map((c,i) => {
+    const f = [fA,fB][i]; const ri = RATING_INFO[c.rating]||{};
+    const isD = f.balance < 0;
+    return `<div class="compare-card">
+      <div class="ch">${c.name}</div>
+      <div class="cs">${c.show} · <span style="color:${ri.color}">${c.rating}</span></div>
+      <table class="d-table" style="font-size:0.8rem">
+        <tr><td>Total Income</td><td class="pos">${fmt(f.totalIncome)}</td></tr>
+        <tr><td>Total Expenses</td><td class="neg">${fmt(f.totalExpense)}</td></tr>
+        <tr class="total-row"><td>${isD?'Deficit':'Surplus'}</td><td class="${isD?'neg':'pos'}">${isD?'–':'+'}${fmt(Math.abs(f.balance))}</td></tr>
+      </table>
+    </div>`;
+  }).join('');
+
+  if (cmpChart) cmpChart.destroy();
+  cmpChart = new Chart(document.getElementById('compareChart'), {
+    type:'bar',
+    data:{
+      labels:['Income','Expenses'],
+      datasets:[
+        {label:cA.name, data:[fA.totalIncome,fA.totalExpense], backgroundColor:['#1a1a1a','#E3120B'], borderWidth:0},
+        {label:cB.name, data:[fB.totalIncome,fB.totalExpense], backgroundColor:['#2b4f8a','#d46a0a'], borderWidth:0},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{font:{family:'Oswald',size:11},color:'#1a1a1a',boxWidth:12,padding:14}},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw)}`}}
+      },
+      scales:{
+        x:{ticks:{font:{family:'EB Garamond',size:12},color:'#1a1a1a'},grid:{display:false}},
+        y:{ticks:{font:{family:'Oswald',size:9},color:'#6b6256',callback:v=>fmtK(v)},grid:{color:'rgba(0,0,0,0.05)'}}
+      }
+    }
+  });
+}
+
+const PROFILES = {
+  "archie": {
+    "bio": "Archie Bunker is the template against which all subsequent sitcom financial implausibility must be measured. A dock foreman in Astoria, Queens, he owns a modest row house with a real mortgage, worries about money visibly and often, and his combined household income — supplemented by Edith's occasional work and a small offset from the Stivics — just covers his outgoings. His leisure expenditure (beer, bowling) is accounted for and proportionate. He is, in short, a man who lives within his means, which in the context of this dataset makes him almost exotic.",
+    "verdict": "The gold standard of sitcom economic realism. Archie Bunker has an actual mortgage. The show never promises comfort; it documents the anxious edge of working-class American life. Everything that came after was a retreat from this honesty."
+  },
+  "rhoda": {
+    "bio": "Rhoda Morgenstern represents a more financially grounded New York archetype than most of what followed her. A working-class Jewish woman from the Bronx who parlays window dressing wages into a small business, her West Side Manhattan apartment stretches the budget perceptibly but not impossibly — particularly once the Morgenstern household income is pooled. Her clothing expenditure is real; her social life is active; her rent is high but not catastrophic.",
+    "verdict": "An A: largely defensible, with one or two convenient assumptions. Rhoda is what the 1990s sitcom could have been, had it retained any interest in economic honesty. It did not."
+  },
+  "mary": {
+    "bio": "Mary Richards is perhaps the first prestige sitcom protagonist whose wardrobe invites forensic scrutiny. A single professional woman in Minneapolis — a city whose cost of living is forgiving — her WJM salary progresses credibly from assistant to associate producer over seven seasons. The apartment is defensible; the food and social costs are reasonable; it is the clothing line that raises the eyebrow. Minneapolis is not a fashion capital, yet Mary Richards dresses as though it were.",
+    "verdict": "A BBB: the finances work in aggregate, but the wardrobe does not work against the salary. A woman earning $38,000 in 1970 Minneapolis does not maintain that wardrobe without a supplementary income the show declines to mention."
+  },
+  "cliff": {
+    "bio": "The Huxtable household is the control group. A dual-income professional family in Brooklyn — OB/GYN and attorney — with a combined annual income approaching $400,000 in 1988 dollars, their brownstone, while large, is architecturally appropriate for the address and the earnings. Private schooling for five children is expensive but not disproportionate. The leisure expenditure is generous but absorbable. Everything balances.",
+    "verdict": "AAA, awarded without reservation. The Huxtables can afford everything they are shown to own. Their finances are coherent. Their brownstone is real. They are the exception — and in 1984, depicting a Black professional household with defensible finances was itself a political act."
+  },
+  "sam": {
+    "bio": "Sam Malone presents a financially complex but ultimately credible case. Asset-rich as the owner of both the bar and, apparently, the building it occupies — a legacy of his baseball earnings — his cash flow from operations is modest but real. His dating expenditure is eyebrow-raising and his personal living costs are artificially suppressed by residing above the premises, but the underlying asset base makes the numbers work.",
+    "verdict": "An A. A working bar owner in Boston with real estate assets can sustain the lifestyle shown. The baseball career provides a foundation; the bar provides cash flow; the building provides security. Sam passes. It helps enormously that he owns the building."
+  },
+  "al": {
+    "bio": "Al Bundy is presented as the working-class sitcom everyman, perpetually emasculated by his family's demands on a shoe salesman's income. His salary cannot, even under optimistic commission assumptions, sustain four people in the Chicago suburbs in the early 1990s — and the show is explicit about this, which is what distinguishes Al from his peers: his financial strain is the joke, not the invisible backdrop. Peg's discretionary spending alone consumes nearly 40% of his gross.",
+    "verdict": "A B: the income is real, the expenses are implausible, and the mortgage is suspiciously low. The show's self-awareness about Al's poverty earns partial credit. The NOMAAM scheme revenue of $400 per annum earns none."
+  },
+  "carla": {
+    "bio": "Carla Tortelli is the most economically stressed character in the Cheers ensemble — which is to say, she is one of the most economically honest characters in 1980s television. A single mother of eventually eight children, operating on a waitress's income supplemented by inconsistent child support, her childcare costs alone consume more than half her gross earnings. The show is aware of her precarity and references it. This is rarer than it sounds.",
+    "verdict": "A BBB: not impossible, but requiring the kind of quiet heroism the show doesn't have time to fully dramatise. Carla Tortelli is doing the maths every month. The maths are very bad."
+  },
+  "alexp": {
+    "bio": "Alex P. Keaton is financially honest precisely because he is a teenager who lives at home. His declared income — allowance, tutoring, speculative stock trades — totals roughly $10,200 per year, against which his primary expenditure is suits, the Wall Street Journal, and investment losses. His room and board cost him nothing. His ideological commitment to capitalism costs him considerably more.",
+    "verdict": "A CCC for Alex personally; the Keaton household is a different matter entirely. He is kept solvent by the parental infrastructure he finds philosophically embarrassing — a predicament that is, in miniature, a perfect description of supply-side economics."
+  },
+  "goldengirlsdorothy": {
+    "bio": "Dorothy Zbornak's finances are among the more honestly constructed in 1980s television, partly because the shared-household model distributes costs across four women in a way that makes a substitute teacher's salary survivable. Her $34,000 in wages covers one quarter of the Miami mortgage, a share of household costs, and a modest personal allowance for clothing and social activity. The arrangement is structurally sensible in a way that single-occupant sitcom households rarely are.",
+    "verdict": "A BB: the shared-household arithmetic is sound, but a substitute teacher's salary in isolation would not sustain a Miami property, even split four ways. The Golden Girls is, quietly, an argument for communal living as financial strategy."
+  },
+  "rachel": {
+    "bio": "Rachel Green is the foundational case study in sitcom financial impossibility. Arriving in New York with no income, no employment history, and a wardrobe that would strain a hedge fund manager's budget, she proceeds to spend the next ten years living in a Greenwich Village two-bedroom on a waitress's wages. Her clothing expenditure — $18,000 per annum at conservative estimate — exceeds her take-home pay from Central Perk. The annual deficit is not a rounding error; it is the entire income.",
+    "verdict": "D. The clothing alone is disqualifying. Rachel Green is financed by Monica's rent-stabilised grandmother, sporadic family transfers, and narrative convenience. She is the genre's defining impossible case — and the one that established the template for everything that followed."
+  },
+  "monica": {
+    "bio": "Monica Geller is the load-bearing wall of the Friends economic ecosystem. Her apartment — technically held under her grandmother's rent-stabilised lease, a detail introduced in Season 4 as a retroactive explanation for the impossible rent — provides below-market housing for herself and, for much of the series, Rachel Green. Her chef's salary progresses credibly from sous chef to head chef; her actual outgoings are reasonable. The apartment is the single point of structural failure.",
+    "verdict": "A BB: the income is real, the chef career is plausible, and the social costs are defensible. But without the grandmother's lease — a legal arrangement the show introduces and then declines to examine — the entire enterprise collapses immediately."
+  },
+  "joey": {
+    "bio": "Joey Tribbiani's finances are a mystery even deeper than Kramer's, because unlike Kramer, Joey appears to believe he is managing. His food expenditure — documented, recurring, and treated as a personality trait rather than a budget line — exceeds his plausible acting income in six of the ten series years. He is kept solvent by Chandler Bing, who functions across the entire run as an involuntary social safety net. By series end, the informal debt is estimated at $114,000.",
+    "verdict": "D. The food costs alone are disqualifying. Joey Tribbiani does not have a financial strategy; he has Chandler. These are not the same thing, though for ten years they produced identical results."
+  },
+  "chandler": {
+    "bio": "Chandler Bing is the unacknowledged financial hero of Friends. His vaguely corporate job — never precisely identified, famously so — pays a salary consistent with a mid-level IT procurement or financial data role at a Manhattan firm in the late 1990s. He subsidises Joey, covers shortfalls, and functions as the group's invisible central bank. His own expenses are high but not impossible; it is the Joey subsidy that strains the budget rather than breaks it.",
+    "verdict": "An A. Chandler earns what he spends and then some. He is the only Friend whose finances could survive a forensic audit. His tragedy is that nobody noticed — least of all Joey, who borrowed $114,000 without apparent awareness that this constituted a debt."
+  },
+  "ross": {
+    "bio": "Ross Geller is the most economically credentialled Friend. A tenured palaeontology professor at NYU with a museum retainer and research stipends, his income is real and his career trajectory is coherent. His expenditure, however, is distorted by the extraordinary legal and financial consequences of three marriages and their subsequent dissolutions — an annualised cost that consumes nearly a fifth of his gross income and reduces what should be a comfortable professional life to a borderline case.",
+    "verdict": "A BBB: Ross can afford his apartment and his lifestyle, but not simultaneously with the divorce costs. The show is occasionally aware of this tension. Three divorces and a tenured professorship do not, in combination, produce financial comfort. They produce Ross Geller."
+  },
+  "jerry": {
+    "bio": "Jerry Seinfeld is among the more defensible sitcom protagonists: a working stand-up comedian earning real income from real gigs, living in a rent-stabilised apartment the show has always been transparent about. His vices are the diner and a rotating cast of women, both of which have been costed conservatively. The Monk's Café bill, annualised across four visits per week, represents a genuine and underappreciated budget line.",
+    "verdict": "A BBB: uncomfortable rather than impossible. The income is credible; the rent is suppressed but legally so; the diner bill is real. Jerry Seinfeld is one of the more honest depictions of a working comedian's finances in television history — which, given the competition, is a low bar he nonetheless clears."
+  },
+  "kramer": {
+    "bio": "Cosmo Kramer represents the purest expression of sitcom financial impossibility: a man with zero verified income across nine seasons who nonetheless sustains a lifestyle involving leisure, food, clothing, and a furnished apartment. His income sources, catalogued across 180 episodes, total approximately $7,800 per year. His rent, at stabilised rates, costs twice that. The gap is not addressed in any episode. It is not addressed here either, because there is no address for it.",
+    "verdict": "D. Our best working hypothesis: Kramer does not pay rent. Jerry Seinfeld's refrigerator is his primary food source. He is, economically speaking, a parasite of spectacular charm — and the show's most complete and least examined financial mystery."
+  },
+  "elaine": {
+    "bio": "Elaine Benes is the most financially orthodox character in the Seinfeld quartet, and one of the more credible protagonists in 1990s television. Her career progression — editorial assistant to senior editor at Pendant Publishing, then creative director at J. Peterman — is realistically compensated at each stage. Her Manhattan studio is stabilised, her social costs are real but contained, and her clothing expenditure, while notable, is consistent with her seniority.",
+    "verdict": "An A. Elaine's income is real, her career trajectory is plausible, and her expenses are within a defensible range. She is one of the few 1990s sitcom protagonists who appears to have thought about money at some point — however briefly, and however unsuccessfully."
+  },
+  "frasier": {
+    "bio": "Dr. Frasier Crane presents the rare and genuinely remarkable case of a sitcom character who can actually afford his lifestyle. A major-market radio host in Seattle with a maintained private practice, his combined income approaches $245,000 annually — sufficient to support his wine collection, his Elliott Bay Towers apartment, his Barcelona chair, and the household costs associated with his father's live-in care. Every line item is defensible. This is almost suspicious.",
+    "verdict": "AAA, awarded with full confidence and no caveats. Frasier Crane earns what he spends. His wine is extravagant; his furniture is the work of a man who has read too many design catalogues; his apartment is spectacular. All of it is within his means. He is, in this dataset, the control group — and the loneliest data point in it."
+  },
+  "niles": {
+    "bio": "Dr. Niles Crane is financially complex in a way that rewards close attention. His psychiatry practice generates genuine income; his lifestyle in early seasons is partially underwritten by Maris's family fortune. Post-divorce, the budget tightens visibly — and unusually for a sitcom, the show acknowledges this. The wine cellar and the bespoke clothing are expensive; the divorce legal costs, annualised across two dissolutions, are crushing; the Elliott Bay apartment is premium even by Frasier's standards.",
+    "verdict": "An AA that slides toward A in post-Maris seasons. The practice income is real; the divorce costs are genuinely ruinous; the lifestyle is genuinely expensive. What distinguishes Niles from most sitcom characters is that the show occasionally depicts his financial strain as stressful. This is a form of honesty the genre rarely achieves."
+  },
+  "will": {
+    "bio": "Will Smith's financial situation in Bel-Air is one of the most structurally honest in 1990s television: he is dependent on his wealthy relatives and the show knows it. His personal income — allowance, occasional schemes — totals roughly $13,600 per year, against which his personal expenditure on clothing and social activity runs to $16,800. The gap is covered by Uncle Phil, and the show is explicit about this dynamic rather than papering over it.",
+    "verdict": "An AA at the household level; a CCC for Will personally. Philip Banks is a high-earning attorney whose finances are coherent; Will's presence adds a manageable rounding error. Will is, financially, an extremely well-housed charity case — and the show occasionally and productively says so."
+  },
+  "roseanne": {
+    "bio": "Roseanne is one of the most financially honest shows of the 1990s. The Conner household's money is a constant, explicit dramatic concern — not background set dressing. The factory wages, Dan's variable construction income, and the later diner revenue are all period-accurate; the mortgage on a Lanford, Illinois house is plausible; the costs of three children are real and frequently referenced as burdensome. The show treats working-class financial anxiety as subject rather than backdrop.",
+    "verdict": "A BB: tight, occasionally implausible, but the show's consistent awareness of its own financial constraints elevates it above most peers. The Conners are genuinely stretched; the writers know it; the characters know it. This is rarer than it sounds."
+  },
+  "michael": {
+    "bio": "Michael Scott earns a respectable salary for Scranton, Pennsylvania — a city whose cost of living is so low that his financial catastrophe is all the more impressive. His regional manager income, properly deployed, could support a comfortable life in a mid-sized Pennsylvania city. Instead it is consumed by a Porsche lease, an entertainment budget of startling irrationality, impulsive purchases, and the debt service on previous impulsive purchases. Scranton is where his income is a strength; his spending habits are where it becomes irrelevant.",
+    "verdict": "A CCC. Michael Scott is not poor; he is financially incompetent in a specifically managerial way — constitutionally incapable of refusing himself anything, perpetually certain the next purchase will solve the problem the previous purchase created. His finances are a character study. The character study is not flattering."
+  },
+  "tobias": {
+    "bio": "Tobias Fünke presents a case the Sitconomist's methodology was not designed to handle: a man whose professional credentials are fraudulent, whose income is functionally zero, and whose existence is financed by a wife whose own fortune is the product of ongoing securities fraud. His acting career has generated $800 in verifiable revenue across his entire working life. His Blue Man Group audition costs alone exceed this by a factor of five.",
+    "verdict": "D, with a footnote: the Fünke financial situation is inseparable from the Bluth family finances, which are themselves a crime scene rather than a household. Tobias personally earns nothing and is owed nothing. He is a rounding error in a ledger that is already fraudulent."
+  },
+  "jd": {
+    "bio": "J.D.'s financial trajectory is one of the more coherent in 2000s television, partly because Scrubs is willing to depict the actual economics of medical training. The intern stipend is real and genuinely low; the medical school debt is acknowledged and costed; the salary improvement as he advances from intern to resident to attending is narratively accurate. His finances improve for plausible, career-based reasons — a shockingly realistic arc for the genre.",
+    "verdict": "A BB trending toward BBB in later seasons. The debt is real; the early salary is tight for the lifestyle shown; the attending income eventually makes the numbers work. J.D. Dorian is one of the few sitcom characters whose financial situation improves because of professional competence rather than narrative fiat."
+  },
+  "charlie": {
+    "bio": "Charlie Harper is presented as a successful jingle composer living in a Malibu beach house he owns outright — a lifestyle the show attributes to unspecified but apparently enormous royalty income. The composition and royalty revenue is plausible for a prolific and well-catalogued jingle writer. What is not plausible is the Malibu beachfront property, which in 2003 represented a capital outlay the show never explains, attributes to prior success it never quantifies, and treats as simply given.",
+    "verdict": "A BB: the ongoing income is defensible; the asset is not. A successful jingle composer can earn $260,000 annually. He cannot acquire Malibu beachfront property on that income alone without a prior windfall, an inheritance, or a plot convenience — and Two and a Half Men is not interested in distinguishing between these."
+  },
+  "raymond": {
+    "bio": "Ray Barone is one of television's more financially credible protagonists. A nationally syndicated sports columnist for Newsday earns real money; suburban Long Island property is expensive but within the range of a dual-income professional household; three children add cost but not impossibility. The show's economic backdrop is one of modest professional success rather than fantasy, and the financial stress in the Barone household is psychological — the parents next door — rather than monetary.",
+    "verdict": "An A. Ray Barone can afford his life. His salary is plausible; his house is appropriate; his family costs are real but manageable. He is, in the landscape of 2000s sitcom protagonists, a refreshing anomaly: a man who earns what he spends and spends what he earns."
+  },
+  "tony": {
+    "bio": "Tony Soprano's finances are a study in parallel accounting. His declared income from the waste management company covers the mortgage on the New Jersey McMansion and provides a respectable suburban veneer. The organised crime proceeds — conservatively estimated, carefully laundered — finance everything else: Carmela's domestic expectations, AJ and Meadow's education, the business obligations and gifts that constitute the actual cost of running a mob family, and the twice-weekly therapy sessions with Dr. Melfi that represent the most expensive introspection in New Jersey history.",
+    "verdict": "An AA, contingent on accepting the crime proceeds as income rather than liability — which, for the purposes of this analysis, we do. Tony Soprano can afford his life. Whether his life can afford Tony Soprano is a question the show spends seven seasons answering."
+  },
+  "david": {
+    "bio": "David Brent earns a regional manager's salary at Wernham Hogg that is adequate for Slough — a city not known for placing excessive demands on a household budget. His expenditure, however, is distorted by a self-image that his salary cannot support: the clothing, the entertainment of colleagues who do not particularly enjoy being entertained, the guitar, and the motivational speaking career he pivots to post-redundancy, which generates a fraction of his former income at comparable emotional cost.",
+    "verdict": "A CCC. David Brent is not living beyond his means so much as performing beyond them — every expenditure in service of a reputation for generosity and cool that his bank account cannot sustain and his colleagues do not endorse. The motivational speaking generates £4,000 per annum. The ego requires considerably more."
+  },
+  "leslie": {
+    "bio": "Leslie Knope is one of television's most financially grounded protagonists, partly because Parks and Recreation was set in a mid-sized Indiana city where a municipal salary is survivable, and partly because Leslie and Ben's combined household income is explicitly the income of two working adults rather than one implausibly housed single person. The waffle consumption, while medically concerning, is priced accurately. The civic activity budget is real but modest.",
+    "verdict": "An AA. The Pawnee setting is the key variable: move this show to Manhattan and the finances collapse immediately. Set in Indiana, with two incomes and a sensible house, the numbers work. Leslie Knope is what the sitcom can achieve when it remembers that geography affects rent."
+  },
+  "nick": {
+    "bio": "Nick Miller is the 2010s sitcom's most honest depiction of creative-class financial precarity. A law school dropout tending bar in Los Angeles, with a self-published novel (Night Moves) that generated $1,200 in lifetime revenue, his finances are a running concern throughout the series. The loft's below-market rent is the single structural implausibility; his bar manager wages, his social costs, and his vague debt obligations are all precisely calibrated to the anxiety level the show maintains.",
+    "verdict": "A CCC. Nick is solvent in the way that someone who simply refuses to examine the problem is solvent. His novel earned $1,200. He has filed this under 'income' and moved on. This is not a financial strategy. It is a personality trait."
+  },
+  "jake": {
+    "bio": "Jake Peralta is notable for being a sitcom character whose financial dysfunction is explicitly a character trait rather than an invisible background condition. His NYPD detective salary is real; his Brooklyn apartment consumes 26% of that salary, which is high but not impossible; it is the credit card debt — referenced throughout the series, growing visibly across seasons — and the Die Hard memorabilia budget that render the overall picture structurally insolvent. The show depicts this as an ongoing problem rather than a resolved one.",
+    "verdict": "A CCC. Jake's salary is real; his spending is irrational; the credit card debt is the honest consequence of the gap between them. Brooklyn Nine-Nine is one of the few shows that depicts financial irresponsibility as an actual continuing problem rather than a charming quirk with no arithmetic consequences."
+  },
+  "dennis": {
+    "bio": "Dennis Reynolds co-owns a bar in South Philadelphia that, across eighteen seasons, has never been observed serving more than eight customers simultaneously. His share of Paddy's Pub net income is, at optimistic estimate, $8,400 per year — sufficient to cover approximately eight and a half months of his Philadelphia apartment rent. The remaining expenditure on clothing, dating, and the maintenance of a self-image that his income cannot support is financed by mechanisms the show has never specified and never will.",
+    "verdict": "D. Paddy's Pub generates revenue consistent with a broom closet serving watered-down beer to the same four regulars across two decades. Dennis Reynolds maintains an apartment, a wardrobe, and a lifestyle that cannot be reconciled with this income. How this persists is the show's great unanswered question — which is fitting, because every question about the gang is ultimately unanswered."
+  },
+  "abbi": {
+    "bio": "Abbi Abrams represents the 2010s' most honest depiction of creative-class millennial precarity in New York. A gym cleaner with artistic aspirations, her income of roughly $36,400 per year is genuinely low for a Brooklyn apartment split between two tenants; her social costs are real and documented; her marijuana expenditure constitutes a meaningful budget line that the show treats as comedy rather than crisis. Broad City is unusually transparent about the fact that its protagonists should not be able to live as they do.",
+    "verdict": "A CCC. Abbi's income cannot comfortably support her Brooklyn apartment even split with Ilana. What distinguishes Broad City from comparable shows is the absence of an explanatory hand-wave — no rent stabilisation, no rich relative, no unexplained corporate job. They are simply broke in New York. The show finds this funny. The maths do not."
+  },
+  "jay": {
+    "bio": "Jay Pritchett is the most financially coherent patriarch in 2010s ensemble television. A successful business owner who has spent decades building a closet and blinds empire, his wealth is explained, consistent, and periodically quantified. His Encino mansion is paid off; his investment portfolio generates real passive income; his adult children's periodic subsidies are a meaningful line item but not a structurally destabilising one. He is rich in the way that a self-made small business owner is rich — not glamorously, but sustainably.",
+    "verdict": "AAA. Jay's income is real, his wealth is earned, and his expenses are proportionate. The Modern Family ensemble's financial health rests entirely on him; without his transfers and subsidies, Mitchell and Claire's households both face immediate scrutiny. As the foundation, he holds. As a standalone case, he is one of the cleanest in this dataset."
+  },
+  "piper": {
+    "bio": "Piper Chapman's financial situation is the most structurally unusual in this dataset. Her primary housing cost is zero, covered by the state of Connecticut. Her income — $1.14 per hour from a prison work assignment, supplemented by a brief and ill-fated contraband soap enterprise — totals approximately $9,824 over six seasons. Her actual financial crisis is the dismantlement of her pre-incarceration life: the legal fees, the relationship costs, the business she never built. Prison is, in a narrow accounting sense, the most affordable housing she has ever occupied.",
+    "verdict": "D — not because Piper cannot afford prison, which she can, but because the financial structure of her pre-incarceration life and its ongoing legal costs constitute a debt spiral the $1.14 hourly wage cannot begin to address. Piper Chapman is solvent inside; catastrophically insolvent outside. This distinction matters less than one might hope."
+  },
+  "janine": {
+    "bio": "Janine Teagues may be the most financially honest protagonist in recent sitcom memory. Abbott Elementary makes her $48,000 salary a plot point: she buys her own classroom supplies, carries student loan debt, and maintains a Philadelphia apartment on an income that the show — unusually, admirably — treats as genuinely inadequate for the work she performs. Her out-of-pocket classroom expenditure of $3,600 per year is drawn from documented teacher experience and presented without irony.",
+    "verdict": "A BB — and the show deserves significant credit for getting this close to the truth. Abbott Elementary is the most economically honest sitcom in a decade, which is a compliment and an indictment simultaneously: the bar for honesty in this genre is extraordinarily low."
+  },
+  "carmy": {
+    "bio": "Carmen Berzatto's financial situation is The Bear's most realistic element and its most terrifying one. Inheriting a cash-strapped beef stand, converting it into a fine dining restaurant on a shoestring budget with an emotionally dysfunctional staff, his finances are depicted with more accuracy than any restaurant show in television history. The renovation costs alone exceed his projected first-year revenue by a factor of six. The prior Michelin-starred savings are real but insufficient. The investment is depleted. The break-even date recedes with each season.",
+    "verdict": "A CCC. The Bear is unusual in depicting its protagonist's financial crisis as both genuine and ongoing across multiple seasons. Carmy is not living beyond his means so much as operating a business beyond its means — a distinction that is significant, and that the show's writers clearly understand, and that does not make the mathematics any less grim."
+  },
+  "oliver": {
+    "bio": "Oliver Putnam is a faded theatrical director maintaining an Arconia apartment on Manhattan's Upper West Side on an income the show explicitly frames as negligible. His podcast generates optimistic revenue; his theatrical royalties diminish with each passing season; the informal financial support from Charles Haden-Strange is real but irregular. The Arconia apartment, whose rent the show never specifies, must be stabilised from a long-ago, better-paid era — there is no other explanation compatible with the arithmetic.",
+    "verdict": "D. Oliver's income cannot support his rent; his rent cannot be justified by any income he demonstrably earns. He is sustained by a grandmother's lease, a friend's generosity, and the show's complete disinterest in examining how a broke theatrical director maintains a premium Manhattan address. We share that disinterest, reluctantly, while docking the rating."
+  },
+  "davidrose": {
+    "bio": "David Rose's financial arc is the most dramatically coherent in recent sitcom memory precisely because it is explicitly about the loss of wealth. Beginning penniless in Schitt's Creek after the family fortune evaporates, his path to co-owning a small business with Patrick Brewer is depicted as genuinely difficult, requiring time, failure, and competence. His wardrobe remains the single unresolved anomaly: Alexander McQueen in a motel room is a budget line that no accounting can accommodate.",
+    "verdict": "A BB. The Schitt's Creek premise requires financial consequence, and the show largely delivers it. David's business success is earned. His clothing budget is not. The Alexander McQueen persists as a delightful, unresolved, and entirely unexplained refusal of narrative logic — and we choose to admire it."
+  },
+  "ted": {
+    "bio": "Ted Lasso's finances are among the more straightforwardly defensible in this dataset. A Premier League head coach, even at a mid-table club, commands a salary that in real terms would approach or exceed £200,000 per year; his club-subsidised Richmond flat suppresses his largest potential cost; his biscuit expenditure, while emotionally significant, is a manageable line item. The child support obligations to his family in Kansas are real and substantial, but absorbable against the coaching income.",
+    "verdict": "An AA. Ted Lasso can afford his life, his biscuits, and his emotional generosity. His finances are the least complicated thing about him — which, in a dataset this grim, constitutes something approaching a triumph."
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// DRAWER
+// ═══════════════════════════════════════════════════════
+let activeChar = null;
+let dCharts = {};
+// profiles are hardcoded in PROFILES constant
+
+function openDrawer(char) {
+  activeChar = char;
+  document.getElementById('dShow').textContent = `${char.show} · ${char.years}`;
+  document.getElementById('dName').textContent = char.name;
+  document.getElementById('dOcc').textContent = char.occupation;
+
+  document.querySelectorAll('.d-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); p.innerHTML = ''; });
+  document.querySelector('.d-tab[data-tab="overview"]').classList.add('active');
+  document.getElementById('tab-overview').classList.add('active');
+
+  renderOverview(char);
+  renderFinancials(char);
+  renderScenario(char);
+
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.querySelectorAll('.char-card').forEach(c => c.classList.toggle('active', c.dataset.id === char.id));
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('active'));
+}
+
+// ── OVERVIEW TAB (hardcoded profiles) ─────────────────────────────────────
+function renderOverview(char) {
+  const ri = RATING_INFO[char.rating] || {};
+  const f = getFinancials(char);
+  const isD = f.balance < 0;
+  const profile = PROFILES[char.id] || { bio: 'Profile pending editorial review.', verdict: 'The numbers speak for themselves.' };
+
+  document.getElementById('tab-overview').innerHTML = `
+    <div class="rating-display">
+      <div class="rd-grade" style="color:${ri.color}">${char.rating}</div>
+      <div><div class="rd-title">Implausibility Rating</div><div class="rd-desc">${ri.desc}</div></div>
+    </div>
+    <p class="ai-content">${profile.bio}</p>
+    <div class="verdict-box">
+      <div class="vb-label">Editorial Verdict</div>
+      <div class="vb-text">${profile.verdict}</div>
+    </div>
+    <div class="balance-pill ${isD?'deficit':'surplus'}">
+      <div><div class="bp-label">${isD?'Annual Deficit':'Annual Surplus'}</div>
+      <div class="bp-sub">Housing: ${f.rentRatio}% of income</div></div>
+      <div class="bp-amount">${isD?'–':'+'}${fmt(Math.abs(f.balance))}</div>
+    </div>`;
+}
+
+// ── FINANCIALS TAB ─────────────────────────────────────────────────────────
+function renderFinancials(char, ov = {}) {
+  const f = getFinancials(char, ov);
+  const isD = f.balance < 0;
+
+  document.getElementById('tab-financials').innerHTML = `
+    <table class="d-table">
+      <thead><tr><th>Income</th><th>Annual (est.)</th></tr></thead>
+      <tbody>${f.income.map(i=>`<tr><td>${i.l}</td><td class="pos">${fmt(i.a)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr class="total-row"><td>Total Income</td><td class="pos">${fmt(f.totalIncome)}</td></tr></tfoot>
+    </table>
+    <table class="d-table" style="margin-top:1.1rem">
+      <thead><tr><th>Expenditure</th><th>Annual (est.)</th></tr></thead>
+      <tbody>${f.expenses.map(e=>`<tr><td>${e.l}</td><td class="${e.a<0?'pos':'neg'}">${e.a<0?'+':''}${fmt(Math.abs(e.a))}</td></tr>`).join('')}</tbody>
+      <tfoot><tr class="total-row"><td>Total Expenses</td><td class="neg">${fmt(f.totalExpense)}</td></tr></tfoot>
+    </table>
+    <div class="balance-pill ${isD?'deficit':'surplus'}">
+      <div class="bp-label">${isD?'Annual Deficit':'Annual Surplus'}</div>
+      <div class="bp-amount">${isD?'–':'+'}${fmt(Math.abs(f.balance))}</div>
+    </div>
+    <div class="chart-label">Income vs. Expenses</div>
+    <div class="chart-wrap"><canvas id="dBarChart"></canvas></div>
+    <div class="chart-label">Income Breakdown</div>
+    <div class="chart-wrap"><canvas id="dDonutChart"></canvas></div>`;
+
+  Object.values(dCharts).forEach(c => { try { c.destroy(); } catch(e){} });
+  dCharts = {};
+
+  setTimeout(() => {
+    const barEl = document.getElementById('dBarChart');
+    const donutEl = document.getElementById('dDonutChart');
+    if (!barEl || !donutEl) return;
+
+    dCharts.bar = new Chart(barEl, {
+      type:'bar',
+      data:{labels:['Income','Expenses'],datasets:[{data:[f.totalIncome,f.totalExpense],backgroundColor:['#1a1a1a','#E3120B'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.raw)}`}}},
+        scales:{x:{ticks:{font:{family:'EB Garamond',size:11},color:'#1a1a1a'},grid:{display:false}},y:{ticks:{font:{family:'Oswald',size:9},color:'#6b6256',callback:v=>fmtK(v)},grid:{color:'rgba(0,0,0,0.05)'}}}}
+    });
+
+    dCharts.donut = new Chart(donutEl, {
+      type:'doughnut',
+      data:{
+        labels: f.income.map(i => i.l.substring(0,28) + (i.l.length>28?'…':'')),
+        datasets:[{data:f.income.map(i=>Math.max(0,i.a)),backgroundColor:['#1a1a1a','#E3120B','#2b4f8a','#4a6741','#7a3b1e'],borderWidth:0}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{font:{family:'Oswald',size:9},color:'#3a3530',boxWidth:10,padding:6}},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.raw)}`}}}}
+    });
+  }, 60);
+}
+
+// ── SCENARIO TAB ───────────────────────────────────────────────────────────
+function renderScenario(char) {
+  document.getElementById('tab-scenario').innerHTML = `
+    <p style="font-size:0.83rem;font-style:italic;color:var(--muted);margin-bottom:1rem">Adjust the variables and watch ${char.name}'s balance sheet respond in real time. What happens without rent stabilisation? Without informal subsidies?</p>
+    <div class="scenario-panel">
+      <h4>Scenario Variables</h4>
+      <div class="slider-row">
+        <label>Income multiplier</label>
+        <input type="range" id="slInc" min="50" max="200" value="100" step="5">
+        <span class="slider-val" id="svInc">×1.0</span>
+      </div>
+      <div class="slider-row">
+        <label>Expense multiplier</label>
+        <input type="range" id="slExp" min="50" max="200" value="100" step="5">
+        <span class="slider-val" id="svExp">×1.0</span>
+      </div>
+      <div class="toggle-row">
+        <label>Rent stabilisation applies</label>
+        <label class="tog"><input type="checkbox" id="togRC" checked><span class="tog-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <label>Informal subsidies included</label>
+        <label class="tog"><input type="checkbox" id="togSub" checked><span class="tog-slider"></span></label>
+      </div>
+      <p class="scenario-note">↓ Balance updates automatically</p>
+    </div>
+    <div id="scenarioResult"></div>`;
+
+  function update() {
+    const im = document.getElementById('slInc').value / 100;
+    const em = document.getElementById('slExp').value / 100;
+    const rc = document.getElementById('togRC').checked;
+    const sub = document.getElementById('togSub').checked;
+    document.getElementById('svInc').textContent = `×${im.toFixed(1)}`;
+    document.getElementById('svExp').textContent = `×${em.toFixed(1)}`;
+    const f = getFinancials(char, {incomeMult:im, expenseMult:em, rentControl:rc, subsidy:sub});
+    const isD = f.balance < 0;
+    document.getElementById('scenarioResult').innerHTML = `
+      <table class="d-table">
+        <thead><tr><th>Income</th><th></th></tr></thead>
+        <tbody>${f.income.map(i=>`<tr><td>${i.l}</td><td class="pos">${fmt(i.a)}</td></tr>`).join('')}</tbody>
+        <tfoot><tr class="total-row"><td>Total</td><td class="pos">${fmt(f.totalIncome)}</td></tr></tfoot>
+      </table>
+      <table class="d-table" style="margin-top:0.75rem">
+        <thead><tr><th>Expenses</th><th></th></tr></thead>
+        <tbody>${f.expenses.map(e=>`<tr><td>${e.l}</td><td class="${e.a<0?'pos':'neg'}">${fmt(Math.abs(e.a))}</td></tr>`).join('')}</tbody>
+        <tfoot><tr class="total-row"><td>Total</td><td class="neg">${fmt(f.totalExpense)}</td></tr></tfoot>
+      </table>
+      <div class="balance-pill ${isD?'deficit':'surplus'}" style="margin-top:0.75rem">
+        <div><div class="bp-label">${isD?'Deficit under scenario':'Surplus under scenario'}</div>
+        <div class="bp-sub">Housing: ${f.rentRatio}% of income${!rc?' (market rate applied)':''}</div></div>
+        <div class="bp-amount">${isD?'–':'+'}${fmt(Math.abs(f.balance))}</div>
+      </div>`;
+  }
+
+  ['slInc','slExp'].forEach(id => document.getElementById(id).addEventListener('input', update));
+  ['togRC','togSub'].forEach(id => document.getElementById(id).addEventListener('change', update));
+  update();
+}
+
+// ═══════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('.d-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.d-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+    if (tab.dataset.tab === 'financials' && activeChar) {
+      setTimeout(() => renderFinancials(activeChar), 40);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// CLOSE / KEYBOARD
+// ═══════════════════════════════════════════════════════
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+// ═══════════════════════════════════════════════════════
+// ERA NAV HIGHLIGHT
+// ═══════════════════════════════════════════════════════
+const navLinks = document.querySelectorAll('.era-nav a');
+const ioObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${entry.target.id}`));
+    }
+  });
+}, { rootMargin: '-115px 0px -55% 0px', threshold: 0 });
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+buildTicker();
+buildEras();
+buildAnomalies();
+buildLeague();
+buildCompare();
+document.querySelectorAll('.era-section, #league, #compare').forEach(el => ioObs.observe(el));
+</script>
+</body>
+</html>
